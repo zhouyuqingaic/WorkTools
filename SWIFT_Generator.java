@@ -1,6 +1,8 @@
 /*
  *生成六位流水号的工具类(结合Redis)
  */
+ 
+ 
 public class SWIFT_Generator{
 	/*
 	 * 将Ingeter转为指定位数字组成的字符串
