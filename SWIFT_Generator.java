@@ -3,14 +3,21 @@
  */
 public class SWIFT_Generator{
 	/*
-	 * 将Ingeter转为6位数字组成的字符串
+	 * 将Ingeter转为指定位数字组成的字符串
+	 * bits  指定的位数
+	 * nu    指定被解析的数字 
 	 */
-	public static String IntegerToString_6(Integer nu){
+	public static String IntegerToString(Integer nu,int bits){
 		//处理返回结果
 		String result="";
 		
+		/*
 		//个位
-		result=nu%10+result;
+		if(nu%10>=1){
+			result=nu%10+result;
+		}else{
+			result=0+result;
+		}
 		
 		//十位
 		if(nu%100>=10){
@@ -46,6 +53,16 @@ public class SWIFT_Generator{
 		}else{
 			result=0+result;
 		}
+		*/
+		for(int i=1;i<=bits;i++){
+			Integer base01 = (int)Math.pow(10, i);
+			Integer base001 = (int)Math.pow(10, i-1);
+			if(nu%base01>=base001){
+				result=nu%base01/base001+result;
+			}else{
+				result=0+result;
+			}
+		}
 		
 		return result;
 	}
@@ -59,13 +76,13 @@ public class SWIFT_Generator{
 		String swift=TTcacheManager.getPersistTTCached("SWIFT");
 		//当Redis中没有SWIFT的时候
 		if(swift==null){
-			String result_swift=IntegerToString_6(0);
+			String result_swift=IntegerToString(0,6);
 			TTcacheManager.pushPersistTTCached("SWIFT", result_swift);
 			return result_swift;
 		}else{
 			//当Redis中没有SWIFT的时候,将当前值加1并更新到Redis
 			Integer result_swift_Integer=Integer.parseInt(swift)+1;
-			String result_swift=IntegerToString_6(result_swift_Integer);
+			String result_swift=IntegerToString(result_swift_Integer,6);
 			TTcacheManager.pushPersistTTCached("SWIFT", result_swift);
 			return result_swift;
 		}
@@ -100,6 +117,7 @@ public class SWIFT_Generator{
         for(Thread userThread:userList)
         	userThread.start();
 	}
+	
 	
 	//测试类
 	public static void main(String[] args) throws Exception {
